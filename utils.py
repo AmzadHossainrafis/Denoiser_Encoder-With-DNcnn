@@ -47,6 +47,7 @@ def plot_loss(history):
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig(r"C:\Users\Amzad\Desktop\keras_project\denoiser_encoder\logs\Prediction\loss.png")
     plt.show()
 
 
