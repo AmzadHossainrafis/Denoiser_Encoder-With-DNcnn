@@ -2,10 +2,18 @@
 import numpy as np
 from tensorflow.keras.layers import Conv2D, MaxPooling2D,Subtract, UpSampling2D,Activation,Input,BatchNormalization
 from tensorflow.keras.models import  Model
+import yaml
+from utils import read_config
+
+
+config=read_config()
+
+
+
 
 def DnCNN():
 
-    inpt = Input(shape=(28,28,1))
+    inpt = Input(shape=(config['height'],config['width'],1))
     # 1st layer, Conv+relu
     x = Conv2D(filters=64, kernel_size=(3,3), strides=(1,1), padding='same')(inpt)
     x = Activation('relu')(x)
