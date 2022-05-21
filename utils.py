@@ -1,8 +1,12 @@
    
+from tkinter.tix import IMMEDIATE
 import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras.datasets import mnist
 import os 
+import math
+import yaml
+from tensorflow import keras
 
 
 
@@ -58,3 +62,70 @@ def make_dir(path):
         os.mkdir(path+"logs/model_weights")
     else:
         print("logs directory already exists")
+
+
+def read_config(path=r"C:\Users\Amzad\Desktop\keras_project\denoiser_encoder\config.yaml"):
+    """
+    read the config file
+    """
+    with open('config.yaml') as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+
+    return config
+
+
+
+# Callbacks and Prediction during Training
+# ----------------------------------------------------------------------------------------------
+class SelectCallbacks(keras.callbacks.Callback):
+    def __init__(self,config= read_config()):
+        """
+        Summary:
+            callback class for validation prediction and create the necessary callbacks objects
+        Arguments:
+            val_dataset (object): MyDataset class object
+            model (object): keras.Model object
+            config (dict): configuration dictionary
+        Return:
+            class object
+        """
+        super(keras.callbacks.Callback, self).__init__()
+        self.config = config
+        self.callbacks = []
+
+    def lr_scheduler(self, epoch):
+        """
+        Summary:
+            learning rate decrease according to the model performance
+        Arguments:
+            epoch (int): current epoch
+        Return:
+            learning rate
+        """
+        drop = 0.5
+        epoch_drop = self.config['epochs'] / 8.
+        lr = self.config['learning_rate'] * math.pow(drop, math.floor((1 + epoch) / epoch_drop))
+        return lr
+
+
+    def get_callbacks(self):
+        """
+        Summary:
+            creating callbacks based on configuration
+        Arguments:
+            val_dataset (object): MyDataset class object
+            model (object): keras.Model class object
+        Return:
+            list of callbacks
+        """
+        if self.config['csv']:
+            self.callbacks.append(keras.callbacks.CSVLogger(os.path.join(self.config['csv_log_dir'], self.config['csv_log_name']), separator = ",", append = False))
+        
+        if self.config['checkpoint']:
+            self.callbacks.append(keras.callbacks.ModelCheckpoint(filepath=self.config['checkpoint_dir']+"weights_dncnn.hdf5", save_best_only = True))
+        if self.config['lr']:
+            self.callbacks.append(keras.callbacks.LearningRateScheduler(schedule = self.lr_scheduler))
+        
+        
+        
+        return self.callbacks
