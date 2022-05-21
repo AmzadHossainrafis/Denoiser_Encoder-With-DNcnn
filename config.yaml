@@ -13,16 +13,19 @@ checkpoint: True
 early_stopping: false
 tensorboard: False
 lr : True 
-
+shuffle : True
 
 learning_rate: 0.001
-optimizer: Adam
-loss: categorical_crossentropy
+optimizer: adam
+loss: mean_squared_error
 save_model_name : "Dncnn"
 csv_log_dir: 'logs/csv_logs/'
 csv_log_name: 'Dncnn.csv'
 checkpoint_dir: 'logs/model_weights/'
+model_weights: 'C:\Users\Amzad\Desktop\keras_project\denoiser_encoder\logs\model_weights\weights_dncnn.hdf5'
 
+# optimizer: 'adam'
+# loss: 'mean_squared_error'
 
 
 
